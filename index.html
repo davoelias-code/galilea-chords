@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#150a26">
+<title>Galilea Chords v6.6 - Firebase Usuarios + Maestro</title>
+<style>
+*{box-sizing:border-box;font-family:system-ui,Arial}html{overscroll-behavior:none;overscroll-behavior-y:none}body{margin:0;background:#150a26;color:#fff;padding:12px;padding-bottom:90px;overscroll-behavior:none;overscroll-behavior-y:contain;overflow-x:hidden}h1{color:#f5d67b;text-align:center;margin:6px 0 0;font-size:26px}p.sub{text-align:center;color:#c9a8ff;margin:2px 0 12px;font-size:13px}.card{background:#24163f;border:1px solid #6b4db3;border-radius:16px;padding:13px;margin-bottom:11px}label{color:#f5d67b;font-weight:700;font-size:12px;text-transform:uppercase}textarea,input,select{width:100%;background:#12081f;color:#fff;border:1px solid #6b4db3;border-radius:10px;padding:11px;font-size:16px;margin-top:6px}
+#entrada{min-height:180px;line-height:1.5;text-align:left;font-size:11px;padding:10px}
+textarea{min-height:130px;line-height:1.6;text-align:left}.row{display:flex;gap:8px;margin-top:9px}button{flex:1;border:none;border-radius:12px;padding:13px 6px;font-size:14px;font-weight:800;cursor:pointer}.gold{background:#f5d67b;color:#1a0f2e}.purple{background:#7a4dff;color:#fff}.green{background:#25D366;color:#fff}.dark{background:#3a2a5e;color:#fff}.red{background:#ff3b30;color:#fff}.yt{background:#FF0000;color:#fff}.orange{background:#ff9500;color:#fff}.tono{font-size:24px;text-align:center;color:#f5d67b;font-weight:900}
+#salida{white-space:pre-wrap;background:#fff;color:#111;border-radius:12px;padding:14px;font-size:11px;line-height:1.7;min-height:100px;text-align:left}
+#salida b{color:#7a1fa2;font-size:11px;vertical-align:top}
+#salidaMusico{font-size:11px;line-height:1.7}
+#salidaMusico b{color:#7a1fa2;font-size:11px;vertical-align:top}
+#tarimaLetra b{color:#f5d67b;font-size:0.78em;vertical-align:top;letter-spacing:0.5px}
+.cancion{display:flex;justify-content:space-between;align-items:center;background:#12081f;border:1px solid #6b4db3;border-radius:12px;padding:10px;margin-top:8px;cursor:pointer;min-height:58px}.cancion.activa{border-color:#f5d67b;background:#3a2a5e}.setItem{display:flex;justify-content:space-between;align-items:center;background:#12081f;border:1px solid #f5d67b;border-radius:10px;padding:10px;margin-top:7px}.badge{background:#f5d67b;color:#111;border-radius:20px;padding:2px 8px;font-size:12px;font-weight:800}
+#lista{max-height:310px;overflow-y:auto;padding-right:4px;margin-top:8px}
+#lista::-webkit-scrollbar{width:6px}#lista::-webkit-scrollbar-thumb{background:#6b4db3;border-radius:10px}
+#tarima{display:none;position:fixed;inset:0;background:#000;z-index:999;padding:16px;overflow-y:auto;overscroll-behavior:contain}
+#tarima h2{font-size:32px;text-align:left;color:#fff}#tarima .t{font-size:20px;text-align:left;color:#f5d67b;font-weight:800}#tarimaLetra{white-space:pre-wrap;font-size:26px;line-height:1.9;text-align:left;margin-top:14px}#tarimaLetra b{color:#f5d67b}.control-letra{background:#24163f;border:1px solid #6b4db3;border-radius:12px;padding:10px;margin-top:12px}.control-letra p{margin:0 0 6px;text-align:center;color:#f5d67b;font-weight:800;font-size:14px}.control-letra input[type=range]{width:100%;accent-color:#f5d67b}.menu-btn{padding:22px 10px;font-size:18px}.pin-input{text-align:center;font-size:20px;font-weight:700}
+.user-card{background:#12081f;border:1px solid #6b4db3;border-radius:12px;padding:10px;margin-top:8px}
+.user-card b{color:#f5d67b}
+.user-card small{color:#c9a8ff}
+#youtubeViewer{display:none;position:fixed;inset:0;background:#000;z-index:2000;flex-direction:column}
+#youtubeViewer .yt-header{display:flex;gap:8px;padding:12px;background:#150a26;align-items:center}
+#youtubeViewer .yt-header h3{flex:1;margin:0;font-size:16px;color:#fff;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#youtubeViewer iframe{flex:1;width:100%;border:none;background:#000}
+.control-entrada{display:flex;gap:6px;align-items:center;margin-top:8px;background:#12081f;border:1px solid #6b4db3;border-radius:10px;padding:8px}
+.control-entrada span{font-size:11px;color:#c9a8ff;white-space:nowrap}
+.control-entrada input[type=range]{flex:1;accent-color:#f5d67b;margin:0}
+.control-entrada button{flex:none;padding:7px 10px;font-size:12px}
+@media(min-width:700px){body{max-width:800px;margin:0 auto} #tarimaLetra{font-size:34px}}
+@media print{
+  body{background:#fff !important;color:#000 !important;padding:0 !important}
+  body *{visibility:hidden}
+  #cardVistaPrevia, #cardVistaPrevia *{visibility:visible}
+  #cardVistaPrevia{position:absolute !important;left:0;top:0;width:100%;background:#fff !important;border:none !important;padding:10px !important;display:block !important}
+  #cardVistaPrevia label{color:#000 !important}
+  #salida{background:#fff !important;color:#000 !important;font-size:14px !important;line-height:1.8 !important}
+  #salida b{color:#7a1fa2 !important;font-size:14px !important}
+  #youtubeBotonDirector{display:none !important}
+  #tarima, #youtubeViewer, #menuPrincipal, #appMusico{display:none !important}
+}
+</style>
+</head>
+<body>
+<div id="menuPrincipal">
+<h1>✦ Galilea Chords ✦</h1><p class="sub">Banda Galilea • Elige tu rol</p>
+<div class="card" style="text-align:center">
+<p style="font-size:16px">¿Cómo vas a entrar hoy?</p>
+<div class="row"><button class="gold menu-btn" onclick="mostrarPin()">🎼 DIRECTOR MUSICAL<br><small style="color:#333">Usuario + Contraseña</small></button></div>
+<div class="row"><button class="purple menu-btn" onclick="entrarMusico()">🎸 MÚSICO</button></div>
+<div class="row"><button class="orange menu-btn" style="padding:16px 10px;font-size:16px" onclick="mostrarAdminLogin()">👑 ADMIN MAESTRO<br><small style="color:#fff">Solo el líder - Ver contraseñas</small></button></div>
+</div>
+<div class="card" id="pinCard" style="display:none">
+<label>🎼 Entrar como Director</label>
+<label style="display:block;margin-top:10px">Usuario</label><input id="loginUsuario" placeholder="Ej: david_galilea" autocomplete="off">
+<label style="display:block;margin-top:10px">Contraseña</label><input id="pinInput" class="pin-input" type="password" placeholder="Tu contraseña" autocomplete="off">
+<div class="row"><button class="gold" onclick="verificarPin()">Entrar como Director</button><button class="dark" onclick="document.getElementById('pinCard').style.display='none'">Cancelar</button></div>
+<p id="pinError" style="color:#ff6b6b;display:none;text-align:center">Usuario o contraseña incorrectos</p>
+</div>
+<div class="card" id="adminLoginCard" style="display:none;border-color:#ff9500">
+<label>👑 Admin Maestro - Solo Líder</label>
+<label style="display:block;margin-top:10px">Usuario Maestro</label><input id="adminUsuario" placeholder="Usuario maestro" autocomplete="off">
+<label style="display:block;margin-top:10px">Contraseña Maestra</label><input id="adminPass" type="password" placeholder="Contraseña maestra">
+<div class="row"><button class="orange" onclick="verificarMaestro()">Entrar como Maestro</button><button class="dark" onclick="document.getElementById('adminLoginCard').style.display='none'">Cancelar</button></div>
+<p id="adminError" style="color:#ff6b6b;display:none;text-align:center">Usuario o contraseña maestra incorrectos</p>
+<p id="primerUsoAviso" style="display:none;color:#25D366;text-align:center;font-size:13px;margin:8px 0 0">✨ Es la primera vez: puedes crear el primer usuario directo desde aquí abajo</p>
+<div class="row" id="btnPrimerUsuario" style="display:none"><button class="green" onclick="mostrarRegistroPrimerUso()">📝 CREAR PRIMER USUARIO AHORA</button></div>
+</div>
+<div class="card" id="adminPanel" style="display:none;border-color:#ff9500">
+<label>👑 Panel Maestro - Todos los Usuarios</label>
+<div class="row"><button class="green" onclick="mostrarRegistro()">📝 REGISTRAR NUEVO USUARIO</button></div>
+<p style="color:#c9a8ff;font-size:12px;text-align:center;margin:6px 0 0">Solo el Admin Maestro puede crear usuarios</p>
+<div id="listaUsuariosAdmin"></div>
+<div class="row"><button class="dark" onclick="cerrarAdmin()">← Salir del Panel</button><button class="red" onclick="cambiarPassMaestra()">🔑 Cambiar Clave Maestra</button></div>
+</div>
+<div class="card" id="registroCard" style="display:none;border-color:#25D366">
+<label>📝 Registrar Nuevo Usuario - Solo Admin Maestro</label>
+<label style="display:block;margin-top:10px">Nombre completo</label><input id="regNombre" placeholder="Ej: David Pérez">
+<label style="display:block;margin-top:10px">Usuario (sin espacios)</label><input id="regUsuario" placeholder="Ej: david_galilea" autocomplete="off">
+<label style="display:block;margin-top:10px">Contraseña</label><input id="regPass" type="password" placeholder="Mínimo 4 caracteres">
+<label style="display:block;margin-top:10px">Repetir contraseña</label><input id="regPass2" type="password" placeholder="Repite la contraseña">
+<div class="row"><button class="green" onclick="registrarUsuario()">✅ Crear Usuario</button><button class="dark" onclick="document.getElementById('registroCard').style.display='none'">Cancelar</button></div>
+<p id="regError" style="color:#ff6b6b;display:none;text-align:center"></p>
+</div>
+</div>
+<div id="appDirector" style="display:none">
+<h1>✦ Galilea Chords ✦</h1><p class="sub">Modo Director • <span id="directorActivoLabel"></span> • Setlist del Domingo</p>
+<div class="row"><button class="dark" onclick="salirAMenu()">← Menú</button><button class="dark" onclick="cambiarPin()">🔑 Cambiar mi contraseña</button></div>
+<div class="card"><label>🔍 Buscar canción</label><input id="buscador" placeholder="Escribe la canción aquí…" oninput="renderLista()"><p style="color:#c9a8ff;font-size:12px;margin:6px 0 0">Orden alfabético • Desliza para ver más</p><div id="lista"></div><div class="row"><button class="gold" onclick="nuevaCancion()">+ Nueva canción</button><button class="red" onclick="borrarActual()">Borrar</button></div></div>
+<div id="editorCancion" style="display:none">
+<div class="card"><label>Título</label><input id="titulo" placeholder="Canción nueva">
+<label style="display:block;margin-top:10px">Tonalidad original - Mayores y Menores</label><select id="tonoBaseSel">
+<optgroup label="🎵 Mayores"><option>C</option><option>Db</option><option>C#</option><option selected>D</option><option>Eb</option><option>E</option><option>F</option><option>F#</option><option>Gb</option><option>G</option><option>Ab</option><option>A</option><option>Bb</option><option>B</option></optgroup>
+<optgroup label="🎶 Menores"><option>Cm</option><option>C#m</option><option>Dbm</option><option>Dm</option><option>Ebm</option><option>Em</option><option>Fm</option><option>F#m</option><option>Gm</option><option>G#m</option><option>Abm</option><option>Am</option><option>Bbm</option><option>Bm</option></optgroup>
+</select>
+<label style="display:block;margin-top:10px">🔗 Link de YouTube de esta canción</label><input id="youtubeLink" placeholder="Pega aquí el link de YouTube" inputmode="url"><div id="youtubePreviewDirector"></div>
+<label style="display:block;margin-top:10px">Letra con acordes entre [ ] - Ej: [C/E] [G/B] [D/F#] [Am] [Em]</label>
+<div class="control-entrada"><span>✏️ Al escribir:</span><button class="dark" onclick="cambiarTamanoEntrada(-1)">A-</button><input type="range" id="sliderEntrada" min="10" max="20" value="11" oninput="aplicarTamanoEntrada(this.value)"><button class="dark" onclick="cambiarTamanoEntrada(1)">A+</button><span id="tamanoEntradaLabel" style="color:#f5d67b;font-weight:800">11px</span></div>
+<textarea id="entrada" placeholder="Pegar canción aquí"></textarea>
+<div class="row"><button class="gold" onclick="guardar()">💾 Guardar canción</button><button class="dark" onclick="cancelarEditor()">Cancelar</button></div></div>
+</div>
+<div class="card"><div class="tono" id="tonoActual">Tonalidad: D</div><div class="row"><button class="purple" onclick="cambiar(-1)">− 1</button><button class="gold" onclick="cambiar(1)">+ 1</button></div>
+<p style="color:#c9a8ff;font-size:12px;text-align:center;margin:10px 0 0">Mayores</p>
+<div class="row"><button class="dark" onclick="irA('C')">C</button><button class="dark" onclick="irA('D')">D</button><button class="dark" onclick="irA('E')">E</button><button class="dark" onclick="irA('F')">F</button><button class="dark" onclick="irA('G')">G</button><button class="dark" onclick="irA('A')">A</button><button class="dark" onclick="irA('B')">B</button></div>
+<p style="color:#c9a8ff;font-size:12px;text-align:center;margin:10px 0 0">Menores</p>
+<div class="row"><button class="dark" onclick="irA('Cm')">Cm</button><button class="dark" onclick="irA('Dm')">Dm</button><button class="dark" onclick="irA('Em')">Em</button><button class="dark" onclick="irA('Fm')">Fm</button><button class="dark" onclick="irA('Gm')">Gm</button><button class="dark" onclick="irA('Am')">Am</button><button class="dark" onclick="irA('Bm')">Bm</button></div>
+</div>
+<div class="card" id="cardVistaPrevia"><label>Vista previa </label><div id="salida"></div><div id="youtubeBotonDirector" style="margin-top:10px"></div></div>
+<div class="row"><button class="green" onclick="compartirWA()">WhatsApp ↗</button><button class="gold" onclick="copiar()">Copiar</button></div>
+<div class="row"><button class="dark" onclick="abrirTarima()">🎤 MODO TARIMA</button><button class="dark" onclick="imprimirVistaPrevia()">PDF</button></div>
+<div class="card" style="border-color:#f5d67b"><label>📋 Setlist del Domingo</label><input id="nombreSet" placeholder="Escribe nombre del Setlist"><div id="setlist"></div><div class="row"><button class="purple" onclick="limpiarSet()">Limpiar set</button></div><div class="row"><button class="green" onclick="generarCodigoSet()">📤Generar código para músicos</button></div><div id="codigoBox" style="display:none;margin-top:10px"><label>Código para músicos</label><textarea id="codigoGenerado" readonly style="min-height:60px;font-size:18px;text-align:center;font-weight:900"></textarea><div class="row"><button class="gold" onclick="copiarCodigo()">Copiar código</button><button class="green" onclick="compartirCodigoWA()">Enviar por WhatsApp</button></div></div></div>
+<div class="card"><label>Link grupo WhatsApp músicos</label><input id="grupoLink" placeholder="Pega link del grupo"></div>
+</div>
+<div id="appMusico" style="display:none">
+<h1>✦ Galilea Chords ✦</h1><p class="sub">Modo Músico • <span id="musicoActivoLabel"></span></p>
+<div class="row"><button class="dark" onclick="salirAMenu()">← Menú</button></div>
+<div class="card"><label>📥 Código de 4 números que te envió el director</label><input id="codigoPegado" inputmode="numeric" maxlength="4" placeholder="Ej: 2847" style="text-align:center;font-size:24px;letter-spacing:8px;font-weight:900"><div class="row"><button class="gold" onclick="cargarCodigoMusico()">⬇ DESCARGAR SETLIST</button></div></div>
+<div class="card"><label>📋 Setlist que te enviaron</label><div id="nombreSetMusico" style="color:#f5d67b;font-weight:900;margin:8px 0"></div><div id="listaMusico"></div></div>
+<div class="card"><label>Vista</label><div id="salidaMusico" style="white-space:pre-wrap;background:#fff;color:#111;border-radius:12px;padding:14px;font-size:11px;line-height:1.7;min-height:100px;text-align:left">Todavía no has descargado ningún setlist</div><div id="youtubeBotonMusico" style="margin-top:10px"></div><div class="row"><button class="dark" onclick="abrirTarimaMusico()">🎤 MODO TARIMA</button></div></div>
+</div>
+<div id="tarima"><div style="display:flex;gap:8px"><button class="purple" onclick="cambiar(-1);renderTarima()">− 1</button><button class="gold" onclick="cambiar(1);renderTarima()">+ 1</button><button class="red" onclick="cerrarTarima()">✕ Salir</button></div>
+<div class="control-letra"><p>📏 Tamaño de letra en TARIMA: <span id="tamanoLabel">26px</span> </p><input type="range" id="sliderTamano" min="10" max="80" value="26" oninput="aplicarTamano(this.value)"><div class="row"><button class="dark" onclick="cambiarTamano(-4)">A- Más chica</button><button class="dark" onclick="cambiarTamano(4)">A+ Más grande</button></div><div class="row"><button class="dark" onclick="aplicarTamano(10)">Mín.</button><button class="dark" onclick="aplicarTamano(22)">Chica</button><button class="dark" onclick="aplicarTamano(26)">Normal</button><button class="dark" onclick="aplicarTamano(40)">Grande</button><button class="dark" onclick="aplicarTamano(60)">Gigante</button></div></div>
+<h2 id="tarimaTitulo"></h2><div class="t" id="tarimaTono"></div><div id="tarimaLetra"></div><div id="youtubeBotonTarima" style="margin-top:14px"></div><div style="display:flex;gap:8px;margin-top:16px"><button class="dark" onclick="anteriorEnSet()">← Anterior</button><button class="purple" onclick="siguienteEnSet()">Siguiente del set →</button></div></div>
+<div id="youtubeViewer">
+<div class="yt-header">
+<button class="gold" style="flex:none;padding:12px 16px;font-size:16px" onclick="cerrarYoutube()">← Regresar a la canción</button>
+<h3 id="youtubeViewerTitulo">YouTube</h3>
+<button class="red" style="flex:none;padding:12px 16px" onclick="cerrarYoutube()">✕</button>
+</div>
+<iframe id="youtubeIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div style="padding:12px;background:#150a26;display:flex;gap:8px">
+<button class="dark" onclick="cerrarYoutube()">← Regresar atrás</button>
+<button class="yt" onclick="abrirYoutubeExterno()">Abrir en app de YouTube ↗</button>
+</div>
+</div>
+<script>
+const FIREBASE_URL = "https://galilea-chords-default-rtdb.firebaseio.com";
+const URL_CANCIONES = FIREBASE_URL + "/galilea_canciones.json";
+const URL_USUARIOS = FIREBASE_URL + "/galilea_usuarios.json";
+const URL_MAESTRO = FIREBASE_URL + "/galilea_config/maestro.json";
+let MAESTRO_USUARIO = 'admin_galilea';
+let MAESTRO_PASS = 'Galilea2026!';
+const notas=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];const aS={'Db':'C#','Eb':'D#','Gb':'F#','Ab':'G#','Bb':'A#'};
+let canciones=JSON.parse(localStorage.getItem('galilea_v3')||'[]');let setlist=JSON.parse(localStorage.getItem('galilea_set_v3')||'[]');
+if(canciones.length===0){canciones=[{titulo:'Grande es el Señor',tono:'D',letra:'[D] Grande es el [G] Señor',youtube:''},{titulo:'Te Entrego',tono:'Em',letra:'[Em] Te entrego [C] todo',youtube:''}];}
+let actual=0,semitonos=0;let tamanoLetra=parseInt(localStorage.getItem('galilea_tamano')||'26');
+let tamanoEntrada=parseInt(localStorage.getItem('galilea_tamano_entrada')||'11');
+let setRecibido=JSON.parse(localStorage.getItem('galilea_set_recibido')||'null');let actualMusico=0;
+let modoTarima='director';
+let directorActual = localStorage.getItem('galilea_director_actual')||'';
+let musicoActual = localStorage.getItem('galilea_musico_actual')||'';
+let usuarios = {};
+async function cargarUsuariosNube(){
+  try{
+    let res=await fetch(URL_USUARIOS);let datos=await res.json();
+    if(datos && Object.keys(datos).length>0){ usuarios=datos; localStorage.setItem('galilea_usuarios',JSON.stringify(usuarios)); }
+    else {
+      let viejos={}; try{ viejos=JSON.parse(localStorage.getItem('galilea_usuarios')||'{}'); }catch(e){}
+      let viejosDir={}; try{ viejosDir=JSON.parse(localStorage.getItem('galilea_directores')||'{}'); }catch(e){}
+      if(Object.keys(viejos).length===0 && Object.keys(viejosDir).length>0){ Object.keys(viejosDir).forEach(n=>{ let u=n.toLowerCase().replace(/\s+/g,'_'); viejos[u]={nombre:n,usuario:u,pass:viejosDir[n],pin:viejosDir[n],rol:'director'}; }); }
+      if(Object.keys(viejos).length>0){ usuarios=viejos; await guardarUsuariosNube(); }
+      else { await guardarUsuariosNube(); }
+    }
+  }catch(e){}
+}
+async function guardarUsuariosNube(){ try{ await fetch(URL_USUARIOS,{method:'PUT',body:JSON.stringify(usuarios)}); }catch(e){} }
+async function cargarMaestroNube(){
+  try{
+    let res=await fetch(URL_MAESTRO);let datos=await res.json();
+    if(datos && datos.pass){ MAESTRO_USUARIO=datos.usuario||'admin_galilea'; MAESTRO_PASS=datos.pass; }
+    else {
+      let u=localStorage.getItem('galilea_maestro_user')||'admin_galilea';
+      let p=localStorage.getItem('galilea_maestro_pass')||'Galilea2026!';
+      MAESTRO_USUARIO=u; MAESTRO_PASS=p; await guardarMaestroNube();
+    }
+  }catch(e){}
+}
+async function guardarMaestroNube(){ try{ await fetch(URL_MAESTRO,{method:'PUT',body:JSON.stringify({usuario:MAESTRO_USUARIO,pass:MAESTRO_PASS})}); }catch(e){} }
+let youtubeActualUrl='';
+let esNuevaCancion=false;
+async function cargarCancionesNube(){try{let res=await fetch(URL_CANCIONES);let datos=await res.json();if(Array.isArray(datos)&&datos.length>0){canciones=datos;localStorage.setItem('galilea_v3',JSON.stringify(canciones));if(document.getElementById('appDirector').style.display==='block'){renderLista();}}else if(datos===null && canciones.length>0){await guardarCancionesNube(true);}}catch(e){}}
+async function guardarCancionesNube(){try{await fetch(URL_CANCIONES,{method:'PUT',body:JSON.stringify(canciones)});}catch(e){}}
+function guardarLocal(){localStorage.setItem('galilea_v3',JSON.stringify(canciones));localStorage.setItem('galilea_set_v3',JSON.stringify(setlist));localStorage.setItem('galilea_usuarios',JSON.stringify(usuarios));localStorage.setItem('galilea_director_actual',directorActual);localStorage.setItem('galilea_musico_actual',musicoActual);guardarCancionesNube();guardarUsuariosNube();guardarMaestroNube();}
+function norm(n){return aS[n]||n;}
+function raizDe(nota){let m=(nota||'').match(/^([A-G][#b]?)/);if(!m) return nota;return norm(m[1]);}
+function transpSingle(a,p){let m=a.match(/^([A-G][#b]?)(.*)$/);if(!m)return a;let i=notas.indexOf(norm(m[1]));if(i===-1)return a;return notas[(i+p+120)%12]+(m[2]||'');}
+function transp(a,p){if(!a) return a;if(a.includes('/')){return a.split('/').map(parte=>transpSingle(parte.trim(),p)).join('/');}return transpSingle(a,p);}
+function limpiarYoutube(url){if(!url) return '';url=url.trim();if(!url) return '';if(!url.startsWith('http')) url='https://'+url;return url;}
+function extraerIdYoutube(url){if(!url) return '';let m=url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([A-Za-z0-9_-]{11})/);if(m) return m[1];let m2=url.match(/[?&]v=([A-Za-z0-9_-]{11})/);if(m2) return m2[1];return '';}
+function abrirYoutube(url, titulo){url=limpiarYoutube(url);if(!url) return;youtubeActualUrl=url;let id=extraerIdYoutube(url);document.getElementById('youtubeViewerTitulo').innerText = titulo || document.getElementById('titulo').value || 'YouTube - Galilea';if(id){ document.getElementById('youtubeIframe').src='https://www.youtube.com/embed/'+id+'?autoplay=1&rel=0'; }else { window.open(url,'_blank'); return; }document.getElementById('youtubeViewer').style.display='flex';}
+function cerrarYoutube(){document.getElementById('youtubeIframe').src='';document.getElementById('youtubeViewer').style.display='none';}
+function abrirYoutubeExterno(){if(youtubeActualUrl) window.open(youtubeActualUrl,'_blank');}
+function botonYoutubeHTML(url, texto){if(!url) return '';let u=limpiarYoutube(url).replace(/"/g,'&quot;').replace(/'/g,"\\'");let titulo=(document.getElementById('titulo')?.value||'Canción Galilea').replace(/'/g,"\\'");return `<button class="yt" onclick="abrirYoutube('${u}','${titulo}')" style="width:100%;margin-top:6px">▶ ${texto||'Ver en YouTube'}</button>`;}
+function aplicarTamanoEntrada(v){tamanoEntrada=parseInt(v);localStorage.setItem('galilea_tamano_entrada',tamanoEntrada);document.getElementById('tamanoEntradaLabel').innerText=tamanoEntrada+'px';document.getElementById('sliderEntrada').value=tamanoEntrada;document.getElementById('entrada').style.fontSize=tamanoEntrada+'px';document.getElementById('entrada').style.lineHeight=(tamanoEntrada*1.5)+'px';}
+function cambiarTamanoEntrada(d){aplicarTamanoEntrada(Math.min(20,Math.max(10,tamanoEntrada+d)));}
+function mostrarRegistro(){document.getElementById('registroCard').style.display='block';document.getElementById('pinCard').style.display='none';document.getElementById('adminLoginCard').style.display='none';}
+function mostrarRegistroPrimerUso(){document.getElementById('registroCard').style.display='block';document.getElementById('adminLoginCard').style.display='none';}
+async function mostrarPin(){await cargarUsuariosNube();await cargarMaestroNube();document.getElementById('pinCard').style.display='block';document.getElementById('registroCard').style.display='none';document.getElementById('adminLoginCard').style.display='none';document.getElementById('adminPanel').style.display='none';}
+async function mostrarAdminLogin(){await cargarUsuariosNube();await cargarMaestroNube();document.getElementById('adminLoginCard').style.display='block';document.getElementById('pinCard').style.display='none';document.getElementById('registroCard').style.display='none';document.getElementById('adminPanel').style.display='none';if(Object.keys(usuarios).length===0){document.getElementById('primerUsoAviso').style.display='block';document.getElementById('btnPrimerUsuario').style.display='flex';}else{document.getElementById('primerUsoAviso').style.display='none';document.getElementById('btnPrimerUsuario').style.display='none';}}
+async function registrarUsuario(){let nombre=document.getElementById('regNombre').value.trim();let usuario=document.getElementById('regUsuario').value.trim().toLowerCase().replace(/\s+/g,'_');let pass=document.getElementById('regPass').value;let pass2=document.getElementById('regPass2').value;let err=document.getElementById('regError');if(!nombre||!usuario||!pass){err.innerText='Llena nombre, usuario y contraseña';err.style.display='block';return;}if(pass.length<4){err.innerText='Mínimo 4 caracteres';err.style.display='block';return;}if(pass!==pass2){err.innerText='Las contraseñas no coinciden';err.style.display='block';return;}await cargarUsuariosNube();if(usuarios[usuario]){err.innerText='Ese usuario ya existe';err.style.display='block';return;}usuarios[usuario]={nombre:nombre, usuario:usuario, pass:pass, pin:pass, rol:'director', creado:Date.now()};guardarLocal();await guardarUsuariosNube();err.style.display='none';alert('✅ Usuario creado en Firebase: '+usuario);document.getElementById('registroCard').style.display='none';document.getElementById('regNombre').value='';document.getElementById('regUsuario').value='';document.getElementById('regPass').value='';document.getElementById('regPass2').value='';renderAdmin();if(Object.keys(usuarios).length===1){document.getElementById('adminPanel').style.display='block';}}
+async function verificarPin(){await cargarUsuariosNube();let usuario=document.getElementById('loginUsuario').value.trim().toLowerCase().replace(/\s+/g,'_');let pass=document.getElementById('pinInput').value;let u=usuarios[usuario];if(u && (pass===u.pass || pass===u.pin)){directorActual=u.nombre;localStorage.setItem('galilea_director_actual',directorActual);document.getElementById('menuPrincipal').style.display='none';document.getElementById('appDirector').style.display='block';document.getElementById('directorActivoLabel').innerText='Director: '+directorActual+' (@'+usuario+')';document.getElementById('pinError').style.display='none';document.getElementById('pinInput').value='';document.getElementById('editorCancion').style.display='none';cargarCancionesNube().then(()=>{renderLista();render();});aplicarTamanoEntrada(tamanoEntrada);} else { document.getElementById('pinError').style.display='block'; }}
+async function cambiarPin(){await cargarUsuariosNube();let uKey = Object.keys(usuarios).find(k=>usuarios[k].nombre===directorActual);if(!uKey){alert('No se encontró tu usuario');return;}let n=prompt('Nueva contraseña para '+directorActual+':',usuarios[uKey].pass);if(!n)return;if(n.length<4){alert('Mínimo 4 caracteres');return;}usuarios[uKey].pass=n; usuarios[uKey].pin=n; guardarLocal(); await guardarUsuariosNube(); alert('Contraseña cambiada en Firebase.');}
+async function verificarMaestro(){await cargarMaestroNube();await cargarUsuariosNube();let u=document.getElementById('adminUsuario').value.trim();let p=document.getElementById('adminPass').value;if(u===MAESTRO_USUARIO && p===MAESTRO_PASS){document.getElementById('adminLoginCard').style.display='none';document.getElementById('adminError').style.display='none';document.getElementById('adminPanel').style.display='block';renderAdmin();} else { document.getElementById('adminError').style.display='block'; }}
+function renderAdmin(){let keys=Object.keys(usuarios);if(keys.length===0){document.getElementById('listaUsuariosAdmin').innerHTML='<p style="color:#ccc">Aún no hay usuarios registrados.</p>';return;}let h='';keys.forEach(k=>{let u=usuarios[k];h+=`<div class="user-card"><b>${u.nombre}</b><br><small>@${u.usuario}</small><br><span style="font-size:13px">Contraseña: <b style="color:#f5d67b">${u.pass}</b></span><div class="row"><button class="gold" style="padding:8px" onclick="resetPassUsuario('${k}')">Cambiar contraseña</button><button class="red" style="padding:8px" onclick="borrarUsuario('${k}')">Borrar</button></div></div>`;});h+='<p style="color:#c9a8ff;font-size:12px;margin-top:8px;text-align:center">Total usuarios: '+keys.length+'</p>';document.getElementById('listaUsuariosAdmin').innerHTML=h;}
+async function resetPassUsuario(k){let nueva=prompt('Nueva contraseña para '+usuarios[k].nombre+':',usuarios[k].pass);if(!nueva) return;usuarios[k].pass=nueva; usuarios[k].pin=nueva; guardarLocal(); await guardarUsuariosNube(); renderAdmin();alert('Contraseña cambiada a: '+nueva);}
+async function borrarUsuario(k){if(!confirm('¿Borrar usuario '+usuarios[k].nombre+'?')) return;delete usuarios[k]; guardarLocal(); await guardarUsuariosNube(); renderAdmin();}
+async function cambiarPassMaestra(){await cargarMaestroNube();let nueva=prompt('Nueva contraseña maestra:',MAESTRO_PASS);if(!nueva) return;MAESTRO_PASS=nueva; guardarLocal(); await guardarMaestroNube(); alert('Contraseña maestra cambiada en Firebase. Ya funciona en todos los aparatos.');}
+function cerrarAdmin(){document.getElementById('adminPanel').style.display='none';document.getElementById('registroCard').style.display='none';}
+function salirAMenu(){document.getElementById('menuPrincipal').style.display='block';document.getElementById('appDirector').style.display='none';document.getElementById('appMusico').style.display='none';document.getElementById('pinCard').style.display='none';document.getElementById('registroCard').style.display='none';document.getElementById('adminLoginCard').style.display='none';document.getElementById('adminPanel').style.display='none';cerrarYoutube();}
+function entrarMusico(){document.getElementById('menuPrincipal').style.display='none';document.getElementById('appMusico').style.display='block';document.getElementById('musicoActivoLabel').innerText = musicoActual ? 'Músico: '+musicoActual : 'Invitado';renderMusico();}
+function renderLista(){let q=(document.getElementById('buscador').value||'').toLowerCase();let indices = canciones.map((c,i)=>i).sort((a,b)=>canciones[a].titulo.localeCompare(canciones[b].titulo,'es',{sensitivity:'base'}));let h='';indices.forEach(i=>{let c=canciones[i];if(q&&!c.titulo.toLowerCase().includes(q)&&!c.letra.toLowerCase().includes(q))return;let ytIcon = c.youtube ? ' 🎥' : '';h+=`<div class="cancion ${i===actual?'activa':''}"><div onclick="abrir(${i})" style="flex:1"><b>${c.titulo}${ytIcon}</b><br><span style="color:#c9a8ff;font-size:13px">${c.tono}</span></div><button class="gold" style="flex:none;padding:8px 10px" onclick="agregarASet(${i})">＋ Set</button></div>`;});document.getElementById('lista').innerHTML=h||'<p style="color:#ccc">Sin resultados</p>';renderSet();}
+function renderSet(){let h='';if(setlist.length===0)h='<p style="color:#ccc;font-size:13px">Vacío. Dale a ＋ Set</p>';setlist.forEach((s,idx)=>{let c=canciones[s.idx];if(!c)return;let tf=transp(c.tono,s.semitonos||0);let ytBtn = c.youtube ? `<div style="margin-top:6px">${botonYoutubeHTML(c.youtube,'YouTube')}</div>` : '';h+=`<div class="setItem"><div style="flex:1"><span class="badge">${idx+1}</span> <b>${c.titulo}</b><br><small style="color:#c9a8ff">${c.tono} → ${tf}</small>${ytBtn}</div><div style="display:flex;gap:4px"><button class="dark" onclick="moverSet(${idx},-1)">↑</button><button class="dark" onclick="moverSet(${idx},1)">↓</button><button class="red" onclick="quitarSet(${idx})">✕</button></div></div>`;});document.getElementById('setlist').innerHTML=h;}
+function agregarASet(i){setlist.push({idx:i,semitonos:(i===actual?semitonos:0)});document.getElementById('buscador').value='';guardarLocal();renderLista();alert('Agregada al setlist');}function quitarSet(i){setlist.splice(i,1);guardarLocal();renderLista();}function moverSet(i,d){let j=i+d;if(j<0||j>=setlist.length)return;let t=setlist[i];setlist[i]=setlist[j];setlist[j]=t;guardarLocal();renderLista();}function limpiarSet(){if(confirm('¿Limpiar set?')){setlist=[];document.getElementById('nombreSet').value='';document.getElementById('codigoGenerado').value='';document.getElementById('codigoBox').style.display='none';guardarLocal();renderLista();}}
+function abrir(i){actual=i;esNuevaCancion=false;semitonos=0;document.getElementById('titulo').value=canciones[i].titulo;document.getElementById('tonoBaseSel').value=canciones[i].tono;document.getElementById('entrada').value=canciones[i].letra;document.getElementById('youtubeLink').value=canciones[i].youtube||'';document.getElementById('editorCancion').style.display='block';document.getElementById('editorCancion').scrollIntoView({behavior:'smooth',block:'start'});render();}
+function cancelarEditor(){if(esNuevaCancion){canciones.splice(actual,1);if(canciones.length===0){canciones.push({titulo:'Nueva',tono:'D',letra:'',youtube:''});}actual=0;guardarLocal();}document.getElementById('editorCancion').style.display='none';esNuevaCancion=false;renderLista();render();}
+function nuevaCancion(){esNuevaCancion=true;canciones.push({titulo:'',tono:'D',letra:'',youtube:''});actual=canciones.length-1;semitonos=0;document.getElementById('titulo').value='';document.getElementById('tonoBaseSel').value='D';document.getElementById('entrada').value='';document.getElementById('youtubeLink').value='';document.getElementById('buscador').value='';document.getElementById('editorCancion').style.display='block';document.getElementById('editorCancion').scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('titulo').focus();renderLista();render();}
+function guardar(){let tit=document.getElementById('titulo').value.trim();if(!tit){alert('Escribe el título de la canción');document.getElementById('titulo').focus();return;}canciones[actual]={titulo:tit,tono:document.getElementById('tonoBaseSel').value,letra:document.getElementById('entrada').value,youtube:limpiarYoutube(document.getElementById('youtubeLink').value)};guardarLocal();document.getElementById('editorCancion').style.display='none';esNuevaCancion=false;document.getElementById('buscador').value='';renderLista();render();alert('¡Guardada!');}
+function borrarActual(){if(!confirm('¿Borrar? Esta canción se borra para todos los directores.'))return;canciones.splice(actual,1);if(canciones.length===0)canciones.push({titulo:'Nueva',tono:'D',letra:'',youtube:''});actual=0;document.getElementById('editorCancion').style.display='none';esNuevaCancion=false;guardarLocal();renderLista();render();}
+function tonoCalc(){return transp(document.getElementById('tonoBaseSel').value,semitonos);}
+function render(){let t=document.getElementById('entrada').value;let yt=document.getElementById('youtubeLink').value;document.getElementById('tonoActual').innerText='Tonalidad: '+tonoCalc();document.getElementById('salida').innerHTML='<b>'+(document.getElementById('titulo').value||'Sin título')+' - '+tonoCalc()+'</b>\n\n'+t.replace(/\[([^\]]+)\]/g,(m,a)=>'<b>['+transp(a,semitonos)+']</b> ');document.getElementById('youtubeBotonDirector').innerHTML = botonYoutubeHTML(yt,'Ver en YouTube - Probar link');document.getElementById('youtubePreviewDirector').innerHTML = yt ? `<p style="color:#25D366;font-size:12px;margin:4px 0 0">✓ Link guardado</p>` : '';renderLista();}
+function cambiar(n){semitonos+=n;render();}function irA(nota){let base=document.getElementById('tonoBaseSel').value;let baseRaiz=raizDe(base);let destinoRaiz=raizDe(nota);let b=notas.indexOf(baseRaiz);let d=notas.indexOf(destinoRaiz);if(b===-1||d===-1) return;semitonos=(d-b+12)%12;render();}
+function textoPlanoUno(){let yt=document.getElementById('youtubeLink').value;return '🎵 '+document.getElementById('titulo').value+' - Tonalidad: '+tonoCalc()+'\n'+document.getElementById('entrada').value.replace(/\[([^\]]+)\]/g,(m,a)=>'['+transp(a,semitonos)+']')+(yt?'\n🎥 YouTube: '+limpiarYoutube(yt):'');}
+function compartirWA(){window.open('https://wa.me/?text='+encodeURIComponent(textoPlanoUno()),'_blank');}function copiar(){navigator.clipboard.writeText(textoPlanoUno()).then(()=>alert('¡Copiado!'));}
+function imprimirVistaPrevia(){render();setTimeout(()=>{window.print();},100);}
+async function generarCodigoSet(){if(setlist.length===0){alert('Primero arma tu set con ＋ Set');return;}let codigo = Math.floor(1000 + Math.random()*9000).toString();let datos={nombre:document.getElementById('nombreSet').value, director:directorActual, fecha:Date.now(), canciones:setlist.map(s=>{let c=canciones[s.idx];return {titulo:c.titulo, tono:c.tono, letra:c.letra, semitonos:s.semitonos||0, youtube:c.youtube||''};})};document.getElementById('codigoBox').style.display='block';document.getElementById('codigoGenerado').value = 'Publicando...';try{await fetch(FIREBASE_URL + '/galilea/' + codigo + '.json', {method:'PUT', body:JSON.stringify(datos)});document.getElementById('codigoGenerado').value = codigo;alert('¡Publicado por internet! Código: ' + codigo);}catch(e){ alert('No hay internet'); }}
+function copiarCodigo(){navigator.clipboard.writeText(document.getElementById('codigoGenerado').value).then(()=>alert('Código copiado.'));}
+function compartirCodigoWA(){let codigo=document.getElementById('codigoGenerado').value;let link=document.getElementById('grupoLink').value.trim();let msg='🎼 *Nuevo Setlist Galilea* - '+document.getElementById('nombreSet').value+'\nDirector: '+directorActual+'\n\nAbre tu app Galilea, entra como MÚSICO y pon este código:\n\n'+codigo;if(link){navigator.clipboard.writeText(msg).then(()=>{window.open(link,'_blank');alert('Mensaje copiado.');});}else{window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');}}
+async function cargarCodigoMusico(){let txt=document.getElementById('codigoPegado').value.trim().replace('GALILEA-','').replace('GALILEA','').trim();if(txt.length!==4){alert('Pon el código de 4 números');return;}document.getElementById('listaMusico').innerHTML='<p style="color:#f5d67b">Descargando...</p>';try{let res = await fetch(FIREBASE_URL + '/galilea/' + txt + '.json');let datos = await res.json();if(!datos){alert('No encontré ese código.');renderMusico();return;}setRecibido = datos;localStorage.setItem('galilea_set_recibido',JSON.stringify(setRecibido));actualMusico=0; document.getElementById('codigoPegado').value=''; renderMusico();alert('¡Setlist descargado!');}catch(e){ alert('No hay internet.'); renderMusico(); }}
+function renderMusico(){if(!setRecibido){document.getElementById('listaMusico').innerHTML='<p style="color:#ccc">Aún no tienes setlist.</p>';return;}document.getElementById('nombreSetMusico').innerText=setRecibido.nombre + (setRecibido.director ? ' • Dir: '+setRecibido.director : '');let h='';setRecibido.canciones.forEach((c,i)=>{let tf=transp(c.tono,c.semitonos||0);let ytBtn = c.youtube ? `<div style="margin-top:6px">${botonYoutubeHTML(c.youtube,'YouTube')}</div>` : '';h+=`<div class="cancion ${i===actualMusico?'activa':''}"><div onclick="verCancionMusico(${i})" style="flex:1"><b>${c.titulo}</b><br><span style="color:#c9a8ff">${c.tono} → ${tf}</span>${ytBtn}</div><span onclick="verCancionMusico(${i})">▶</span></div>`;});document.getElementById('listaMusico').innerHTML=h;verCancionMusico(actualMusico);}
+function verCancionMusico(i){if(!setRecibido)return;actualMusico=i;let c=setRecibido.canciones[i];let tf=transp(c.tono,c.semitonos||0);let html=c.letra.replace(/\[([^\]]+)\]/g,(m,a)=>'<b>['+transp(a,c.semitonos||0)+']</b> ');document.getElementById('salidaMusico').innerHTML='<b>'+c.titulo+' - '+tf+'</b>\n\n'+html;document.getElementById('youtubeBotonMusico').innerHTML = botonYoutubeHTML(c.youtube||'','▶ Escuchar en YouTube - Practicar');document.querySelectorAll('#listaMusico .cancion').forEach((el,idx)=>{el.classList.toggle('activa',idx===i);});}
+function abrirTarima(){if(document.getElementById('appMusico').style.display==='block'){ modoTarima='musico'; } else { modoTarima='director'; }document.getElementById('tarima').style.display='block';aplicarTamano(tamanoLetra);renderTarima();}
+function cerrarTarima(){document.getElementById('tarima').style.display='none';}
+function renderTarima(){document.getElementById('tarimaTitulo').innerText=document.getElementById('titulo').value;document.getElementById('tarimaTono').innerText='Tonalidad: '+tonoCalc();document.getElementById('tarimaLetra').innerHTML=document.getElementById('entrada').value.replace(/\[([^\]]+)\]/g,(m,a)=>'<b>['+transp(a,semitonos)+']</b> ');let yt='';if(modoTarima==='musico' && setRecibido){ yt=setRecibido.canciones[actualMusico]?.youtube||''; }else { yt=document.getElementById('youtubeLink').value; }document.getElementById('youtubeBotonTarima').innerHTML = botonYoutubeHTML(yt,'▶ YouTube de esta canción');aplicarTamano(tamanoLetra);}
+function abrirTarimaMusico(){if(!setRecibido)return;modoTarima='musico';let c=setRecibido.canciones[actualMusico];document.getElementById('titulo').value=c.titulo;document.getElementById('entrada').value=c.letra;document.getElementById('tonoBaseSel').value=c.tono;semitonos=c.semitonos||0;abrirTarima();}
+function siguienteEnSet(){if(modoTarima==='musico'){if(!setRecibido || setRecibido.canciones.length===0) return;actualMusico = (actualMusico + 1) % setRecibido.canciones.length;let c = setRecibido.canciones[actualMusico];document.getElementById('titulo').value=c.titulo;document.getElementById('entrada').value=c.letra;document.getElementById('tonoBaseSel').value=c.tono;semitonos=c.semitonos||0;verCancionMusico(actualMusico);renderTarima();return;}if(setlist.length===0){ alert('Tu setlist está vacío.'); return; }let pos = setlist.findIndex(s=>s.idx===actual);let siguientePos = (pos===-1) ? 0 : (pos + 1) % setlist.length;let siguiente = setlist[siguientePos];actual = siguiente.idx;semitonos = siguiente.semitonos||0;document.getElementById('titulo').value=canciones[actual].titulo;document.getElementById('tonoBaseSel').value=canciones[actual].tono;document.getElementById('entrada').value=canciones[actual].letra;document.getElementById('youtubeLink').value=canciones[actual].youtube||'';render();renderTarima();}
+function anteriorEnSet(){if(modoTarima==='musico'){if(!setRecibido) return;actualMusico = (actualMusico - 1 + setRecibido.canciones.length) % setRecibido.canciones.length;let c = setRecibido.canciones[actualMusico];document.getElementById('titulo').value=c.titulo;document.getElementById('entrada').value=c.letra;document.getElementById('tonoBaseSel').value=c.tono;semitonos=c.semitonos||0;verCancionMusico(actualMusico);renderTarima();return;}if(setlist.length===0) return;let pos = setlist.findIndex(s=>s.idx===actual);let anteriorPos = (pos<=0) ? setlist.length-1 : pos-1;let anterior = setlist[anteriorPos];actual = anterior.idx;semitonos = anterior.semitonos||0;document.getElementById('titulo').value=canciones[actual].titulo;document.getElementById('tonoBaseSel').value=canciones[actual].tono;document.getElementById('entrada').value=canciones[actual].letra;document.getElementById('youtubeLink').value=canciones[actual].youtube||'';render();renderTarima();}
+function aplicarTamano(v){tamanoLetra=parseInt(v);localStorage.setItem('galilea_tamano',tamanoLetra);document.getElementById('tamanoLabel').innerText=tamanoLetra+'px';document.getElementById('sliderTamano').value=tamanoLetra;let el=document.getElementById('tarimaLetra');el.style.fontSize=tamanoLetra+'px';el.style.lineHeight=(tamanoLetra*1.7)+'px';}
+function cambiarTamano(d){aplicarTamano(Math.min(80,Math.max(10,tamanoLetra+d)));}
+let startY=0;document.addEventListener('touchstart',e=>{startY=e.touches[0].clientY;},{passive:true});document.addEventListener('touchmove',e=>{let y=e.touches[0].clientY;let dy=y-startY;let scrolled = window.scrollY>0 || document.documentElement.scrollTop>0;if(dy>0 && !scrolled){e.preventDefault();}},{passive:false});
+document.getElementById('entrada').addEventListener('input',render);document.getElementById('titulo').addEventListener('input',render);document.getElementById('youtubeLink').addEventListener('input',render);document.getElementById('tonoBaseSel').addEventListener('change',()=>{semitonos=0;render();});
+aplicarTamanoEntrada(tamanoEntrada);
+(async ()=>{ await cargarMaestroNube(); await cargarUsuariosNube(); await cargarCancionesNube(); })();
+</script>
+</body>
+</html>
